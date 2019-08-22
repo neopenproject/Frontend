@@ -6,8 +6,13 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import hackathon.co.kr.neopen.sdk.pen.IPenCtrl;
+import hackathon.co.kr.neopen.sdk.pen.PenCtrl;
+import hackathon.co.kr.neopen.sdk.pen.penmsg.IPenMsgListener;
+import hackathon.co.kr.neopen.sdk.pen.penmsg.PenMsg;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements IPenMsgListener {
+    private IPenCtrl iPenCtrl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,5 +29,27 @@ public class MainActivity extends AppCompatActivity {
                 finish();
             }
         });
+
+        // create pen controller instance
+        iPenCtrl = PenCtrl.getInstance();
+
+        // Start pen controller
+        iPenCtrl.startup();
+
+        // register pen event callback listener
+        iPenCtrl.setListener(this);
+
+        // register pen ncode callback listener
+        iPenCtrl.setDotListener(this);
+    }
+
+    @Override
+    public void onReceiveMessage(String penAddress, PenMsg penMsg) {
+
+    }
+
+    @Override
+    public void onPointerCaptureChanged(boolean hasCapture) {
+
     }
 }
