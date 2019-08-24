@@ -34,13 +34,13 @@ public class MainActivity extends AppCompatActivity implements IPenMsgListener {
         iPenCtrl = PenCtrl.getInstance();
 
         // Start pen controller
-        iPenCtrl.startup();
+        // iPenCtrl.startup();
 
         // register pen event callback listener
         iPenCtrl.setListener(this);
 
         // register pen ncode callback listener
-        iPenCtrl.setDotListener(this);
+        // iPenCtrl.setDotListener(this);
     }
 
     @Override
