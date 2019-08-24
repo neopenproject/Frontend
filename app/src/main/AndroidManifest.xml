@@ -23,16 +23,18 @@
                   android:screenOrientation="portrait"
                   android:theme="@style/Theme.AppCompat.Light.NoActionBar"
                   android:label="@string/app_name" android:launchMode="singleTask">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
+                <action android:name="android.intent.action.VIEW"/>
 
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".temp.DeviceListActivity"></activity>
-        <activity android:name=".temp.SettingActivity"></activity>
-        <activity android:name=".temp.ProfileTestActivity"></activity>
-        <service android:name=".temp.NeoSampleService"></service>
+        <activity android:name=".temp.DeviceListActivity"/>
+        <activity android:name=".temp.SettingActivity"/>
+        <activity android:name=".temp.ProfileTestActivity"/>
+        <service android:name=".temp.NeoSampleService"/>
     </application>
 
 </manifest>

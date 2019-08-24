@@ -104,7 +104,7 @@ public class SampleView extends View
 		this.canvas = canvas;
 		if(background == null)
 		{
-			canvas.drawColor( Color.LTGRAY );
+			canvas.drawColor( Color.WHITE );
 		}
 		else
 		{

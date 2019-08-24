@@ -71,10 +71,7 @@ public class PenActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_pen);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
 
         try {
             ViewConfiguration config = ViewConfiguration.get(this);
@@ -106,37 +103,25 @@ public class PenActivity extends AppCompatActivity
         oIntent.setClass(this, NeoSampleService.class);
         startService(oIntent);
 
+        penClientSetting();
 
-        AlertDialog.Builder builder;
-        builder = new AlertDialog.Builder(this);
-        builder.setSingleChoiceItems(new CharSequence[]{"Single Connection Mode", "Multi Connection Mode"}, connectionMode, new DialogInterface.OnClickListener() {
+        findViewById(R.id.iv_ble_refresh).setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
-                connectionMode = which;
-                if (connectionMode == 0) {
-                    penClientCtrl = PenClientCtrl.getInstance(getApplicationContext());
-                    fwUpdateDialog = new FwUpdateDialog(PenActivity.this, penClientCtrl, mNotifyManager, mBuilder);
-                    Log.d(TAG, "SDK Version " + penClientCtrl.getSDKVerions());
-                } else {
-                    multiPenClientCtrl = MultiPenClientCtrl.getInstance(getApplicationContext());
-                    fwUpdateDialog = new FwUpdateDialog(PenActivity.this, multiPenClientCtrl, mNotifyManager, mBuilder);
-                    Log.d(TAG, "SDK Version " + multiPenClientCtrl.getSDKVerions());
+            public void onClick(View v) {
+                if (penClientCtrl.isConnected()) {
+                    penClientCtrl.disconnect();
                 }
-                dialog.dismiss();
+                penClientSetting();
             }
         });
-        builder.setCancelable(false);
-        builder.create().show();
 
-        findViewById(R.id.iv_capture).setOnClickListener(view ->
-                DefaultFunctionKt.getBitmapFromView(mSampleView, PenActivity.this, bitmap -> {
-                            Log.d("", bitmap.toString());
-                            return Unit.INSTANCE;
-                        }
-                )
-        );
     }
 
+    private void penClientSetting() {
+        penClientCtrl = PenClientCtrl.getInstance(getApplicationContext());
+        fwUpdateDialog = new FwUpdateDialog(PenActivity.this, penClientCtrl, mNotifyManager, mBuilder);
+        penClientCtrl.connect("9C:7B:D2:05:6E:3F", null);
+    }
 
     private void chkPermissions() {
         if (Build.VERSION.SDK_INT >= 23) {
@@ -211,47 +196,7 @@ public class PenActivity extends AppCompatActivity
 
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        switch (requestCode) {
-            case REQUEST_CONNECT_DEVICE_SECURE:
-                // When DeviceListActivity returns with a device to connect
-                if (resultCode == Activity.RESULT_OK) {
-                    String sppAddress = null;
 
-                    if ((sppAddress = data.getStringExtra(DeviceListActivity.EXTRA_DEVICE_SPP_ADDRESS)) != null) {
-                        boolean isLe = data.getBooleanExtra(DeviceListActivity.EXTRA_IS_BLUETOOTH_LE, false);
-                        String leAddress = data.getStringExtra(DeviceListActivity.EXTRA_DEVICE_LE_ADDRESS);
-
-                        if (connectionMode == 0) {
-                            boolean leResult = penClientCtrl.setLeMode(isLe);
-
-                            if (leResult) {
-                                penClientCtrl.connect(sppAddress, leAddress);
-                            } else {
-                                try {
-                                    penClientCtrl.connect(sppAddress);
-                                } catch (BLENotSupportedException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        } else {
-                            multiPenClientCtrl.connect(sppAddress, leAddress, isLe);
-                        }
-                    }
-                }
-                break;
-        }
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu items for use in the action bar
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.pen, menu);
-
-        return super.onCreateOptionsMenu(menu);
-    }
 
     @Override
     protected void onDestroy() {
@@ -272,263 +217,6 @@ public class PenActivity extends AppCompatActivity
 
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle presses on the action bar items
-        switch (item.getItemId()) {
-            case R.id.action_setting:
-
-                if (connectionMode == 0) {
-                    if (penClientCtrl.isAuthorized()) {
-                        Intent intent = new Intent(PenActivity.this, SettingActivity.class);
-                        startActivity(intent);
-                    }
-                } else {
-                    connectedList = multiPenClientCtrl.getConnectDevice();
-                    if (connectedList.size() > 0) {
-                        AlertDialog.Builder builder;
-                        String[] addresses = connectedList.toArray(new String[connectedList.size()]);
-                        builder = new AlertDialog.Builder(this);
-                        builder.setSingleChoiceItems(addresses, 0, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                Intent intent = new Intent(PenActivity.this, SettingActivity.class);
-                                intent.putExtra("pen_address", connectedList.get(which));
-                                startActivity(intent);
-                                dialog.dismiss();
-                            }
-                        });
-                        builder.create().show();
-                    }
-
-                }
-                return true;
-
-            case R.id.action_connect:
-                if (connectionMode == 1 || (connectionMode == 0 && !penClientCtrl.isConnected())) {
-                    startActivityForResult(new Intent(PenActivity.this, DeviceListActivity.class), 4);
-                }
-                return true;
-
-            case R.id.action_disconnect:
-                if (connectionMode == 0) {
-                    if (penClientCtrl.isConnected()) {
-                        penClientCtrl.disconnect();
-                    }
-                } else {
-                    connectedList = multiPenClientCtrl.getConnectDevice();
-                    if (connectedList.size() > 0) {
-                        AlertDialog.Builder builder;
-                        String[] addresses = connectedList.toArray(new String[connectedList.size()]);
-                        builder = new AlertDialog.Builder(this);
-                        builder.setSingleChoiceItems(addresses, 0, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                multiPenClientCtrl.disconnect(connectedList.get(which));
-                                dialog.dismiss();
-                            }
-                        });
-                        builder.create().show();
-                    }
-
-                }
-
-                return true;
-
-//            case R.id.action_offline_list:
-//                if (connectionMode == 0) {
-//                    if (penClientCtrl.isAuthorized()) {
-//                        // to process saved offline data
-//                        penClientCtrl.reqOfflineDataList();
-//                    }
-//                } else {
-//                    connectedList = multiPenClientCtrl.getConnectDevice();
-//                    if (connectedList.size() > 0) {
-//                        AlertDialog.Builder builder;
-//                        String[] addresses = connectedList.toArray(new String[connectedList.size()]);
-//                        builder = new AlertDialog.Builder(this);
-//                        builder.setSingleChoiceItems(addresses, 0, new DialogInterface.OnClickListener() {
-//                            @Override
-//                            public void onClick(DialogInterface dialog, int which) {
-//                                multiPenClientCtrl.reqOfflineDataList(connectedList.get(which));
-//                                dialog.dismiss();
-//                            }
-//                        });
-//                        builder.create().show();
-//                    }
-//                }
-//                return true;
-//
-//            case R.id.action_offline_list_page:
-//                // 펜에있는 오프라인 데이터 리스트를 페이지단위로 받아온다.
-//
-//                final int sectionId = 0, ownerId = 0, noteId = 0;
-//                //TODO Put section, owner , note
-//
-//                if (connectionMode == 0) {
-//                    if (penClientCtrl.isAuthorized()) {
-//                        // to process saved offline data
-//
-//                        try {
-//                            penClientCtrl.reqOfflineDataPageList(sectionId, ownerId, noteId);
-//                        } catch (ProtocolNotSupportedException e) {
-//                            e.printStackTrace();
-//                        }
-//
-//                    }
-//                } else {
-//                    connectedList = multiPenClientCtrl.getConnectDevice();
-//                    if (connectedList.size() > 0) {
-//                        AlertDialog.Builder builder;
-//                        String[] addresses = connectedList.toArray(new String[connectedList.size()]);
-//                        builder = new AlertDialog.Builder(this);
-//                        builder.setSingleChoiceItems(addresses, 0, new DialogInterface.OnClickListener() {
-//                            @Override
-//                            public void onClick(DialogInterface dialog, int which) {
-//                                try {
-//                                    multiPenClientCtrl.reqOfflineDataPageList(connectedList.get(which), sectionId, ownerId, noteId);
-//                                } catch (ProtocolNotSupportedException e) {
-//                                    e.printStackTrace();
-//                                }
-//
-//                                dialog.dismiss();
-//                            }
-//                        });
-//                        builder.create().show();
-//                    }
-//                }
-//
-//                return true;
-//
-//            case R.id.action_upgrade:
-//                if (connectionMode == 0) {
-//                    if (penClientCtrl.isAuthorized()) {
-//                        fwUpdateDialog.show(penClientCtrl.getConnectDevice());
-//                    }
-//                } else {
-//                    connectedList = multiPenClientCtrl.getConnectDevice();
-//                    if (connectedList.size() > 0) {
-//                        AlertDialog.Builder builder;
-//                        String[] addresses = connectedList.toArray(new String[connectedList.size()]);
-//                        builder = new AlertDialog.Builder(this);
-//                        builder.setSingleChoiceItems(addresses, 0, new DialogInterface.OnClickListener() {
-//                            @Override
-//                            public void onClick(DialogInterface dialog, int which) {
-//                                fwUpdateDialog.show(connectedList.get(which));
-//                                dialog.dismiss();
-//                            }
-//                        });
-//                        builder.create().show();
-//                    }
-//                }
-//
-//                return true;
-//
-//            case R.id.action_pen_status:
-//                if (connectionMode == 0) {
-//                    if (penClientCtrl.isAuthorized()) {
-//                        penClientCtrl.reqPenStatus();
-//                    }
-//                } else {
-//                    connectedList = multiPenClientCtrl.getConnectDevice();
-//                    if (connectedList.size() > 0) {
-//                        AlertDialog.Builder builder;
-//                        String[] addresses = connectedList.toArray(new String[connectedList.size()]);
-//                        builder = new AlertDialog.Builder(this);
-//                        builder.setSingleChoiceItems(addresses, 0, new DialogInterface.OnClickListener() {
-//                            @Override
-//                            public void onClick(DialogInterface dialog, int which) {
-//                                multiPenClientCtrl.reqPenStatus(connectedList.get(which));
-//                                dialog.dismiss();
-//                            }
-//                        });
-//                        builder.create().show();
-//                    }
-//                }
-//                return true;
-//
-//            case R.id.action_profile_test:
-//                if (penClientCtrl.isAuthorized()) {
-//                    if (penClientCtrl.isSupportPenProfile()) {
-//                        startActivity(new Intent(PenActivity.this, ProfileTestActivity.class));
-//
-//                    } else {
-//                        Util.showToast(this, "Firmware of this pen is not support pen profile feature.");
-//                    }
-//                }
-//
-//                return true;
-//
-//            case R.id.action_pen_unpairing:
-//                if (connectionMode == 0) {
-//                    if (penClientCtrl.isAuthorized())
-//                        penClientCtrl.unpairDevice(penClientCtrl.getConnectDevice());
-//                } else {
-//                    connectedList = multiPenClientCtrl.getConnectDevice();
-//                    if (connectedList.size() > 0) {
-//                        AlertDialog.Builder builder;
-//                        String[] addresses = connectedList.toArray(new String[connectedList.size()]);
-//                        for (String addr : addresses) {
-//                            penClientCtrl.unpairDevice(addr);
-//                        }
-//                    }
-//                }
-//                return true;
-//
-//            case R.id.action_symbol_stroke:
-//                // 특정 페이지의 심볼 리스트를 추출, 스트로크 데이터를 입력하여서 이미지를 추출할 수 있는 샘플
-//
-//                // 특정 페이지의 심볼 리스트를 추출
-//                Symbol[] symbols = MetadataCtrl.getInstance().findApplicableSymbols(currentBookcodeId, currentPagenumber);
-//
-//                // 해당 심볼 중, 원하는 심볼을 선택해서 이미지를 만든다.
-//                // 본 샘플에서는 임의로 첫번째 심볼을 선택하였음. 아래 부분을 수정하여 원하는 심볼을 선택할 수 있다.
-//                if (symbols != null && symbols.length > 0)
-//                    mSampleView.makeSymbolImage(symbols[0]);
-//
-//                return true;
-//
-//            case R.id.action_convert_neoink:
-//                // 현재 페이지의 stroke 를 NeoInk format 으로 변환합니다.
-//                // 변환된 파일은 json 형식으로 지정된 위치에 저장합니다.
-//                if (connectionMode == 0) {
-//                    String captureDevice = penClientCtrl.getDeviceName();
-//                    mSampleView.makeNeoInkFile(captureDevice);
-//                } else {
-//                    connectedList = multiPenClientCtrl.getConnectDevice();
-//                    if (connectedList.size() > 0) {
-//                        AlertDialog.Builder builder;
-//                        String[] addresses = connectedList.toArray(new String[connectedList.size()]);
-//                        builder = new AlertDialog.Builder(this);
-//                        builder.setSingleChoiceItems(addresses, 0, new DialogInterface.OnClickListener() {
-//                            @Override
-//                            public void onClick(DialogInterface dialog, int which) {
-//                                String captureDevice = multiPenClientCtrl.getDeviceName(connectedList.get(which));
-//                                mSampleView.makeNeoInkFile(captureDevice);
-//                                dialog.dismiss();
-//                            }
-//                        });
-//                        builder.create().show();
-//                    }
-//                }
-//                return true;
-//
-//            case R.id.action_db_export:
-//
-//                // DB Export
-//                Util.spliteExport(this);
-//
-//                return true;
-//
-//            case R.id.action_db_delete:
-//
-//                DbOpenHelper mDbOpenHelper = new DbOpenHelper(this);
-//                mDbOpenHelper.deleteAllColumns();
-
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
 
     private void handleDot(String penAddress, Dot dot) {
         NLog.d("penAddress=" + penAddress + ",handleDot type =" + dot.dotType);
