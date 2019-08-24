@@ -17,9 +17,9 @@
     <string name="viewDot">ViewDot</string>
     <string name="offline">OfflineData(All)</string>
     <string name="offline_page">OfflineData(Page)</string>
- 	<string name="offline_list">OfflineData list</string>
- 	<string name="pen_status">Pen Status</string>
- 	<string name="pen_unpairing">Pen Unpairing</string>
+    <string name="offline_list">OfflineData list</string>
+    <string name="pen_status">Pen Status</string>
+    <string name="pen_unpairing">Pen Unpairing</string>
     <string name="pen_profile">Pen Profile Test</string>
     <string name="symbol_stroke">Symbol Stroke</string>
     <string name="convert_neoink">Convert NeoInk</string>
@@ -31,12 +31,12 @@
 
 
     <string name="pen_setup_auto_power">Auto Power On/Off</string>
- 	<string name="pen_setup_beep">Beep On/Off</string>
- 	<string name="pen_setup_password">Setup Password</string>
-  	<string name="pen_color_1">color1</string>
- 	<string name="pen_color_2">color2</string>
- 	
- 	
+    <string name="pen_setup_beep">Beep On/Off</string>
+    <string name="pen_setup_password">Setup Password</string>
+    <string name="pen_color_1">color1</string>
+    <string name="pen_color_2">color2</string>
+
+
     <!--  DeviceListActivity -->
     <string name="scanning">scanning for devices</string>
     <string name="select_device">select a device to connect</string>
@@ -46,4 +46,7 @@
     <string name="title_other_devices">Other Available Devices</string>
     <string name="button_scan">Scan for devices</string>
     <string name="button_le_scan">Scan LE for devices</string>
+
+    <string name="default_number">%d</string>
+    <string name="default_float">%.1f</string>
 </resources>
