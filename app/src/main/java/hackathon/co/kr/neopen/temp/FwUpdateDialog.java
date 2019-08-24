@@ -334,7 +334,7 @@ public class FwUpdateDialog extends Dialog implements OnCheckListener,OnDownLoad
                 ((TextView)fw_version_layout.findViewById( R.id.fw_version_local_text )).setText( "Pen FW version : "+ fwVersion );
                 if(isUpgrade(fwVersion,lastServerVersion))
                 {
-                    ((Button)fw_version_layout.findViewById( R.id.btn_ok )).setVisibility( View.INVISIBLE );
+                    ((Button)fw_version_layout.findViewById( R.id.btn_assign)).setVisibility( View.INVISIBLE );
                     ((Button)fw_version_layout.findViewById( R.id.btn_download )).setVisibility( View.VISIBLE );
                     ((Button)fw_version_layout.findViewById( R.id.btn_download )).setOnClickListener( new View.OnClickListener()
                     {
@@ -377,8 +377,8 @@ public class FwUpdateDialog extends Dialog implements OnCheckListener,OnDownLoad
                 else
                 {
                     ((Button)fw_version_layout.findViewById( R.id.btn_download )).setVisibility( View.INVISIBLE );
-                    ((Button)fw_version_layout.findViewById( R.id.btn_ok )).setVisibility( View.VISIBLE );
-                    ((Button)fw_version_layout.findViewById( R.id.btn_ok )).setOnClickListener( new View.OnClickListener()
+                    ((Button)fw_version_layout.findViewById( R.id.btn_assign)).setVisibility( View.VISIBLE );
+                    ((Button)fw_version_layout.findViewById( R.id.btn_assign)).setOnClickListener(new View.OnClickListener()
                     {
                         @Override
                         public void onClick ( View v )

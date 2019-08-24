@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools">
+    <data>
+        <variable name="activity" type="hackathon.co.kr.ui.login.view.LoginActivity"/>
+        <variable name="loginVM" type="hackathon.co.kr.ui.login.viewModel.LoginViewModel"/>
+    </data>
+    <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        <ImageView
+                android:src="@drawable/img_login_logo"
+                android:layout_marginTop="80dp"
+                android:layout_gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+        <include
+                tools:loginVM="@{loginVM}"
+                tools:type="@{0}"
+                layout="@layout/layout_login"/>
+
+        <include
+                tools:loginVM="@{loginVM}"
+                tools:type="@{1}"
+                layout="@layout/layout_login"/>
+
+        <include
+                tools:loginVM="@{loginVM}"
+                tools:type="@{2}"
+                android:visibility="invisible"
+                layout="@layout/layout_login"/>
+
+        <include
+                android:visibility="invisible"
+                tools:loginVM="@{loginVM}"
+                tools:type="@{3}"
+                layout="@layout/layout_login"/>
+
+        <LinearLayout
+                android:visibility="gone"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_margin="16dp"
+                android:layout_height="wrap_content">
+
+            <TextView
+                    android:id="@+id/tv_title"
+                    tools:text="이름"
+                    android:textSize="13sp"
+                    android:text="@{loginVM.titles[4]}"
+                    android:layout_width="wrap_content"
+                    android:textStyle="bold"
+                    android:layout_height="wrap_content"/>
+
+            <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                <EditText
+                        android:id="@+id/et_year"
+                        android:textSize="18sp"
+                        android:padding="4dp"
+                        tools:text="abcd"
+                        android:text="@={loginVM.inputs[4]}"
+                        android:layout_marginTop="8dp"
+                        android:background="@drawable/item_border_black"
+                        android:layout_weight="1"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"/>
+
+                <EditText
+                        android:id="@+id/et_month"
+                        android:textSize="18sp"
+                        android:padding="4dp"
+                        android:layout_marginHorizontal="8dp"
+                        tools:text="abcd"
+                        android:text="@={loginVM.inputs[5]}"
+                        android:layout_marginTop="8dp"
+                        android:background="@drawable/item_border_black"
+                        android:layout_weight="1"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"/>
+
+                <EditText
+                        android:id="@+id/et_day"
+                        android:textSize="18sp"
+                        android:padding="4dp"
+                        tools:text="abcd"
+                        android:text="@={loginVM.inputs[6]}"
+                        android:layout_marginTop="8dp"
+                        android:background="@drawable/item_border_black"
+                        android:layout_weight="1"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <include
+                android:visibility="gone"
+                tools:loginVM="@{loginVM}"
+                tools:type="@{7}"
+                layout="@layout/layout_login"/>
+
+        <TextView
+                android:id="@+id/btn_login"
+                android:layout_margin="16dp"
+                android:text="로그인"
+                android:gravity="center"
+                android:background="#0000FF"
+                android:textColor="#FFFFFF"
+                android:onClick="@{() -> loginVM.loginBtnClick()}"
+                android:padding="16dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+        <TextView
+                android:id="@+id/btn_assign"
+                android:layout_margin="16dp"
+                android:text="회원가입"
+                android:gravity="center"
+                android:background="#FFFFFF"
+                android:textColor="#0000FF"
+                android:onClick="@{() -> loginVM.assignBtnClick(false)}"
+                android:padding="16dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+    </LinearLayout>
+</layout>

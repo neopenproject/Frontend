@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools">
+    <data>
+        <variable name="loginVM" type="hackathon.co.kr.ui.login.viewModel.LoginViewModel"/>
+        <variable name="type" type="Integer"/>
+    </data>
+
+    <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:layout_height="wrap_content">
+
+        <TextView
+                android:id="@+id/tv_title"
+                tools:text="이름"
+                android:textSize="13sp"
+                android:text="@{loginVM.titles[type]}"
+                android:layout_width="wrap_content"
+                android:textStyle="bold"
+                android:layout_height="wrap_content"/>
+
+        <EditText
+                android:id="@+id/et_description"
+                app:typeSetting="@{type}"
+                android:textSize="18sp"
+                android:padding="4dp"
+                android:text="@={loginVM.inputs[type]}"
+                tools:text="abcd"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/item_border_black"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+    </LinearLayout>
+</layout>
