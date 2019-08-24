@@ -13,9 +13,10 @@ import androidx.core.content.ContextCompat
 import hackathon.co.kr.neopen.temp.PenActivity
 import java.io.*
 
-fun PenActivity.saveGallery(bitmap: Bitmap) {
+fun PenActivity.getImageFile(bitmap: Bitmap) :File? {
     if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
         ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), 113)
+        return null;
     } else {
         // 1. 갤러리 해당 경로에 파일 생성
         val tempFilePath = getExternalFilesDir(null).path + "/" + "${System.currentTimeMillis()}_neopen.jpg"
@@ -23,7 +24,7 @@ fun PenActivity.saveGallery(bitmap: Bitmap) {
 
         // 2. 테마색이 반영된 비트맵 생성
 //        val bitmapPhoto = BitmapFactory.decodeResource(resources, homeVM.getBiggestEmotionImage(month - 1))
-//        val copyBitmap: Bitmap = bitmapPhoto.copy(Bitmap.Config.ARGB_8888, true)
+//        val copyBitmap: Bitmap = saveGallery(this, bitmap);bitmapPhoto.copy(Bitmap.Config.ARGB_8888, true)
 
 //        var canvas = Canvas(copyBitmap)
 //        canvas.drawColor(homeVM.getSecondEmotionFilter(month - 1))
@@ -55,8 +56,10 @@ fun PenActivity.saveGallery(bitmap: Bitmap) {
         tempFile.delete()
 
         Toast.makeText(this, "성공적으로 갤러리에 저장되었습니다.", Toast.LENGTH_SHORT).show()
+        return galleryFile;
     }
 }
+
 
 
 fun getFile(file: File, bitmap: Bitmap): File {

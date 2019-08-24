@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/root_view"
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:background="?selectableItemBackground"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="111dp"
@@ -72,6 +74,7 @@
                 android:background="@drawable/category_round_view">
 
             <TextView
+                    android:id="@+id/tv_category_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="14sp"

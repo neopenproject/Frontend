@@ -18,6 +18,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
+import com.bumptech.glide.Glide;
+import hackathon.co.kr.neopen.DefaultFunctionKt;
 import hackathon.co.kr.neopen.R;
 import hackathon.co.kr.neopen.sdk.ink.structure.Dot;
 import hackathon.co.kr.neopen.sdk.ink.structure.Stroke;
@@ -26,14 +28,26 @@ import hackathon.co.kr.neopen.sdk.pen.offline.OfflineFileParser;
 import hackathon.co.kr.neopen.sdk.pen.penmsg.JsonTag;
 import hackathon.co.kr.neopen.sdk.pen.penmsg.PenMsgType;
 import hackathon.co.kr.neopen.sdk.util.NLog;
+import hackathon.co.kr.ui.dialog.SubmitDialog;
 import hackathon.co.kr.util.network.NetworkUtil;
 import hackathon.co.kr.util.DateUtils;
+import kotlin.Unit;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
+import java.io.File;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+
+import static hackathon.co.kr.util.PhotoUtilKt.getImageFile;
+
 
 public class PenActivity extends AppCompatActivity
 //		implements DrawablePage.DrawablePageListener, DrawableView.DrawableViewGestureListener
@@ -74,6 +88,7 @@ public class PenActivity extends AppCompatActivity
     ConstraintLayout cl_front;
     FrameLayout fl_back;
 
+    private ImageView ivQuiz;
     private TextView tvOriginTimerValue;
     private ImageView changeView;
     private ImageView ivTimerStart;
@@ -84,6 +99,12 @@ public class PenActivity extends AppCompatActivity
 
     private long mStartTime = 0;
     private long mTimeLeftInMillis;
+
+    private String imageUrl;
+
+    private int pk;
+
+    private String isOver = "false";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,6 +122,7 @@ public class PenActivity extends AppCompatActivity
             toolbar.setNavigationOnClickListener(v -> onBackPressed());
         }
 
+        pk = getIntent().getIntExtra("QUIZ_PK", -1);
         try {
             ViewConfiguration config = ViewConfiguration.get(this);
             Field menuKeyField = ViewConfiguration.class.getDeclaredField("sHasPermanentMenuKey");
@@ -113,6 +135,8 @@ public class PenActivity extends AppCompatActivity
             // Ignore
         }
 
+        ivQuiz = findViewById(R.id.iv_quiz);
+        Glide.with(getBaseContext()).load("http://ec2-15-164-171-69.ap-northeast-2.compute.amazonaws.com/api/v1/" + getIntent().getStringExtra("IMAGE_URL")).into(ivQuiz);
         mSampleView = new SampleView(this);
         FrameLayout.LayoutParams para = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT);
         ((FrameLayout) findViewById(R.id.fl_back)).addView(mSampleView, 0, para);
@@ -224,21 +248,23 @@ public class PenActivity extends AppCompatActivity
 //        findViewById(R.id.iv_capture).setOnClickListener(view ->
 //                DefaultFunctionKt.getBitmapFromView(mSampleView, PenActivity.this, bitmap -> {
 //                            Log.d("", bitmap.toString());
-//                            saveGallery(this, bitmap);
+//
 //                            return Unit.INSTANCE;
 //                        }
 //                )
 //        );
 
         progressBar = findViewById(R.id.progress_timer);
-        mStartTime = 6000;
-        progressBar.setMax((int) mStartTime / 1000);
-        mTimeLeftInMillis = mStartTime;
+        mStartTime = getIntent().getIntExtra("TIME_VALUE", 0);
+        mTimeLeftInMillis = mStartTime * 1000;
+        progressBar.setMax((int) mTimeLeftInMillis / 1000);
+        progressBar.setProgress((int) (mTimeLeftInMillis / 1000));
 
         tvOriginTimerValue = findViewById(R.id.tv_origin_timer_value);
         DateUtils.updateCountDownText(tvOriginTimerValue, mStartTime);
 
         tvCountDown = findViewById(R.id.tv_countdown);
+        DateUtils.updateCountDownText(tvCountDown, mStartTime);
         ivTimerStart = findViewById(R.id.iv_timer_play);
 
         ivTimerStart.setOnClickListener(v -> {
@@ -250,6 +276,50 @@ public class PenActivity extends AppCompatActivity
             }
 
         });
+
+        findViewById(R.id.ll_submit_layout).setOnClickListener(v -> {
+            SubmitDialog submitDialog = new SubmitDialog(PenActivity.this, new SubmitDialog.PositiveListener() {
+                @Override
+                public void onPositive() {
+                    sendDataToServer();
+                }
+            }, new SubmitDialog.NegativeListener() {
+                @Override
+                public void onNegative() {
+                    Toast.makeText(getBaseContext(), "부정", Toast.LENGTH_LONG).show();
+                }
+            });
+            submitDialog.init();
+        });
+    }
+
+    private File file;
+    private void sendDataToServer() {
+
+        DefaultFunctionKt.getBitmapFromView(mSampleView, PenActivity.this, bitmap -> {
+            Log.d("", bitmap.toString());
+            file = getImageFile(this, bitmap);
+            RequestBody requestBody = RequestBody.create(MediaType.parse("image/*"), file);
+            MultipartBody.Part body = MultipartBody.Part.createFormData("file", file.getName(), requestBody);
+
+            RequestBody isOverRequest = RequestBody.create(MediaType.parse("text/pain"), isOver);
+            RequestBody pkRequest = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(pk));
+            RequestBody usingTimerRequest = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(mTimeLeftInMillis));
+
+            NetworkUtil.getInstance().postAnswerPost(body, pkRequest, isOverRequest, usingTimerRequest).enqueue(new Callback<String>() {
+                @Override
+                public void onResponse(Call<String> call, Response<String> response) {
+                    Toast.makeText(getBaseContext(), "성공", Toast.LENGTH_LONG).show();
+                }
+
+                @Override
+                public void onFailure(Call<String> call, Throwable t) {
+                    t.printStackTrace();
+
+                }
+            });
+            return Unit.INSTANCE;
+        });
     }
 
     private void startTimer() {
@@ -258,7 +328,7 @@ public class PenActivity extends AppCompatActivity
             @Override
             public void onTick(long millisUntilFinished) {
                 mTimeLeftInMillis = millisUntilFinished;
-                DateUtils.updateCountDownText(tvCountDown, mTimeLeftInMillis);
+                DateUtils.updateCountDownText(tvCountDown, mTimeLeftInMillis / 1000);
                 progressBar.setProgress((int) (mTimeLeftInMillis / 1000));
             }
 
@@ -268,6 +338,7 @@ public class PenActivity extends AppCompatActivity
                 tvCountDown.setTextColor(Color.parseColor("#FE3D04"));
                 ivTimerStart.setVisibility(View.GONE);
                 mTimerRunning = false;
+                isOver = "true";
             }
         }.start();
 
