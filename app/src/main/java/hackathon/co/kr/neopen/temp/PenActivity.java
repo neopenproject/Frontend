@@ -32,6 +32,7 @@ import hackathon.co.kr.neopen.sdk.pen.offline.OfflineFileParser;
 import hackathon.co.kr.neopen.sdk.pen.penmsg.JsonTag;
 import hackathon.co.kr.neopen.sdk.pen.penmsg.PenMsgType;
 import hackathon.co.kr.neopen.sdk.util.NLog;
+import hackathon.co.kr.util.NetworkUtil;
 import kotlin.Unit;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -140,6 +141,8 @@ public class PenActivity extends AppCompatActivity
         penClientCtrl = PenClientCtrl.getInstance(getApplicationContext());
         fwUpdateDialog = new FwUpdateDialog(PenActivity.this, penClientCtrl, mNotifyManager, mBuilder);
         penClientCtrl.connect("9C:7B:D2:05:6E:3C", "DE:D5:F1:43:71:17");
+
+        NetworkUtil.getInstance();
 
         findViewById(R.id.iv_swap).setOnClickListener(view -> {
                     ConstraintLayout cl_front = findViewById(R.id.cl_front);
