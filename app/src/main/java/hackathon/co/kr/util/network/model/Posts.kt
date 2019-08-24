@@ -1,6 +1,7 @@
 package hackathon.co.kr.util.network.model
 
 import hackathon.co.kr.ui.model.Problem
+import java.io.Serializable
 
 data class Posts(
         var id: Int,                // "" : 1,

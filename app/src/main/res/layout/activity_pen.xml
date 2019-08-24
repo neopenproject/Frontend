@@ -109,7 +109,7 @@
                         android:textColor="@color/color_303030"
                         android:lineSpacingExtra="0sp"
                         android:textStyle="bold"
-                        android:text="25:00"/>
+                        android:text="40:00"/>
 
                 <ImageView
                         android:id="@+id/iv_timer_play"
@@ -139,7 +139,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="250dp"
                 android:layout_marginTop="22dp"
-                android:background="@android:color/black"
                 app:layout_constraintTop_toBottomOf="@+id/ll_timer_layout"/>
 
 

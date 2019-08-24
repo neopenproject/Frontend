@@ -23,9 +23,7 @@ interface NetworkInterface {
     ): Call<StringResponse>
 
     @GET("/api/v1/problem/post")
-    fun getAnswerPost(
-            @Query("order") order: String?
-    ): Call<ProblemResponse>
+    fun getAnswerPost(): Call<ProblemResponse>
 
 //    @FormUrlEncoded
 //    @POST("/api/v1/problem/post")
@@ -40,6 +38,7 @@ interface NetworkInterface {
 //            @Query("is_grade_view") is_grade_view: Boolean?
 //    ): Call<>
 //
+
 //    @FormUrlEncoded
 //    @POST("/api/v1/answer/post")
 //    fun postAnswerPost(
@@ -47,4 +46,15 @@ interface NetworkInterface {
 //            @Part("problem_post") problem_post: RequestBody,
 //            @Part("is_over") is_over: RequestBody
 //    ): Call<>
+
+    @Multipart
+    @POST("/api/v1/answer/post")
+    fun postAnswerPost(
+            @Part image: MultipartBody.Part,
+            @Part("problem_post") problem_post: RequestBody,
+            @Part("is_over") is_over: RequestBody,
+            @Part("time") time: RequestBody
+    ): Call<String>
+
+
 }
