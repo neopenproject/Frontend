@@ -4,20 +4,20 @@
     <item
             android:id="@+id/one"
             android:title="홈"
-            android:icon="@drawable/ic_home"/>
+            android:icon="@drawable/ic_home_unselected"/>
 
     <item
             android:id="@+id/two"
-            android:title="검색"
-            android:icon="@drawable/ic_home"/>
+            android:title="문제"
+            android:icon="@drawable/ic_quiz_unselected"/>
 
     <item
             android:id="@+id/three"
-            android:title="셋팅"
-            android:icon="@drawable/ic_home"/>
+            android:title="스터디 룸"
+            android:icon="@drawable/ic_studyroom_unselected"/>
 
     <item
             android:id="@+id/four"
-            android:title="셋팅"
-            android:icon="@drawable/ic_home"/>
+            android:title="영작 광"
+            android:icon="@drawable/ic_community_selected"/>
 </menu>
