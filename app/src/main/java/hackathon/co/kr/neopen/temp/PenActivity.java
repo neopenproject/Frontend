@@ -1,6 +1,9 @@
 package hackathon.co.kr.neopen.temp;
 
 import android.Manifest;
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ObjectAnimator;
 import android.app.*;
 import android.content.*;
 import android.content.pm.PackageManager;
@@ -11,25 +14,25 @@ import android.os.Environment;
 import android.os.Parcelable;
 import android.util.Log;
 import android.view.*;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import hackathon.co.kr.neopen.DefaultFunctionKt;
 import hackathon.co.kr.neopen.R;
 import hackathon.co.kr.neopen.sdk.ink.structure.Dot;
 import hackathon.co.kr.neopen.sdk.ink.structure.Stroke;
-import hackathon.co.kr.neopen.sdk.metadata.MetadataCtrl;
-import hackathon.co.kr.neopen.sdk.metadata.structure.Symbol;
 import hackathon.co.kr.neopen.sdk.pen.bluetooth.BLENotSupportedException;
 import hackathon.co.kr.neopen.sdk.pen.bluetooth.lib.ProtocolNotSupportedException;
 import hackathon.co.kr.neopen.sdk.pen.offline.OfflineFileParser;
 import hackathon.co.kr.neopen.sdk.pen.penmsg.JsonTag;
 import hackathon.co.kr.neopen.sdk.pen.penmsg.PenMsgType;
 import hackathon.co.kr.neopen.sdk.util.NLog;
-import hackathon.co.kr.neopen.temp.provider.DbOpenHelper;
 import kotlin.Unit;
-import kotlin.jvm.functions.Function1;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -37,10 +40,14 @@ import org.json.JSONObject;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 
+import static hackathon.co.kr.util.PhotoUtilKt.saveGallery;
+
 public class PenActivity extends AppCompatActivity
 //		implements DrawablePage.DrawablePageListener, DrawableView.DrawableViewGestureListener
 {
     public static final String TAG = "pensdk.sample";
+    public static boolean isInit = true;
+    public static boolean isFront = true;
 
     public static final int REQ_GPS_EXTERNAL_PERMISSION = 0x1002;
 
@@ -90,7 +97,7 @@ public class PenActivity extends AppCompatActivity
 
         mSampleView = new SampleView(this);
         FrameLayout.LayoutParams para = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT);
-        ((FrameLayout) findViewById(R.id.sampleview_frame)).addView(mSampleView, 0, para);
+        ((FrameLayout) findViewById(R.id.fl_back)).addView(mSampleView, 0, para);
 
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, new Intent("firmware_update"), PendingIntent.FLAG_UPDATE_CURRENT);
 
@@ -107,30 +114,109 @@ public class PenActivity extends AppCompatActivity
         startService(oIntent);
 
 
-        AlertDialog.Builder builder;
-        builder = new AlertDialog.Builder(this);
-        builder.setSingleChoiceItems(new CharSequence[]{"Single Connection Mode", "Multi Connection Mode"}, connectionMode, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                connectionMode = which;
-                if (connectionMode == 0) {
-                    penClientCtrl = PenClientCtrl.getInstance(getApplicationContext());
-                    fwUpdateDialog = new FwUpdateDialog(PenActivity.this, penClientCtrl, mNotifyManager, mBuilder);
-                    Log.d(TAG, "SDK Version " + penClientCtrl.getSDKVerions());
-                } else {
-                    multiPenClientCtrl = MultiPenClientCtrl.getInstance(getApplicationContext());
-                    fwUpdateDialog = new FwUpdateDialog(PenActivity.this, multiPenClientCtrl, mNotifyManager, mBuilder);
-                    Log.d(TAG, "SDK Version " + multiPenClientCtrl.getSDKVerions());
+//        AlertDialog.Builder builder;
+//        builder = new AlertDialog.Builder(this);
+//        builder.setSingleChoiceItems(new CharSequence[]{"Single Connection Mode", "Multi Connection Mode"}, connectionMode, new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialog, int which) {
+//                connectionMode = which;
+//                if (connectionMode == 0) {
+//                    penClientCtrl = PenClientCtrl.getInstance(getApplicationContext());
+//                    fwUpdateDialog = new FwUpdateDialog(PenActivity.this, penClientCtrl, mNotifyManager, mBuilder);
+//                    Log.d(TAG, "SDK Version " + penClientCtrl.getSDKVerions());
+//                } else {
+//                    multiPenClientCtrl = MultiPenClientCtrl.getInstance(getApplicationContext());
+//                    fwUpdateDialog = new FwUpdateDialog(PenActivity.this, multiPenClientCtrl, mNotifyManager, mBuilder);
+//                    Log.d(TAG, "SDK Version " + multiPenClientCtrl.getSDKVerions());
+//                }
+//
+//                penClientCtrl.connect("9C:7B:D2:05:6E:3C", "DE:D5:F1:43:71:17");
+//                dialog.dismiss();
+//            }
+//        });
+//        builder.setCancelable(false);
+//        builder.create().show();
+
+        penClientCtrl = PenClientCtrl.getInstance(getApplicationContext());
+        fwUpdateDialog = new FwUpdateDialog(PenActivity.this, penClientCtrl, mNotifyManager, mBuilder);
+        penClientCtrl.connect("9C:7B:D2:05:6E:3C", "DE:D5:F1:43:71:17");
+
+        findViewById(R.id.iv_swap).setOnClickListener(view -> {
+                    ConstraintLayout cl_front = findViewById(R.id.cl_front);
+                    FrameLayout fl_back = findViewById(R.id.fl_back);
+
+                    // 이 화면이 current가 된지 처음일 경우
+                    if (isInit) {
+                        // 앞면이라면 (앞 -> 뒤)
+                        if (isFront) {
+                            final ObjectAnimator oa1 = ObjectAnimator.ofFloat(cl_front, "scaleX", 1f, 0f);
+                            final ObjectAnimator oa2 = ObjectAnimator.ofFloat(fl_back, "scaleX", 0f, 1f);
+
+                            oa1.setDuration(300);
+                            oa2.setDuration(300);
+
+                            cl_front.setVisibility(View.VISIBLE);
+                            fl_back.setVisibility(View.INVISIBLE);
+
+                            oa1.setInterpolator(new DecelerateInterpolator());
+                            oa2.setInterpolator(new AccelerateDecelerateInterpolator());
+                            oa1.addListener(new AnimatorListenerAdapter() {
+                                @Override
+                                public void onAnimationEnd(Animator animation) {
+                                    isFront = false;
+                                    super.onAnimationEnd(animation);
+                                    cl_front.setVisibility(View.INVISIBLE);
+                                    fl_back.setVisibility(View.VISIBLE);
+                                    oa2.start();
+                                }
+                            });
+
+                            oa1.start();
+                        }
+                        // 뒤 -> 앞
+                        else {
+                            final ObjectAnimator oa1 = ObjectAnimator.ofFloat(fl_back, "scaleX", 1f, 0f);
+                            final ObjectAnimator oa2 = ObjectAnimator.ofFloat(cl_front, "scaleX", 0f, 1f);
+
+                            oa1.setDuration(300);
+                            oa2.setDuration(300);
+
+                            fl_back.setVisibility(View.VISIBLE);
+                            cl_front.setVisibility(View.INVISIBLE);
+
+                            oa1.setInterpolator(new DecelerateInterpolator());
+                            oa2.setInterpolator(new AccelerateDecelerateInterpolator());
+                            oa1.addListener(new AnimatorListenerAdapter() {
+                                @Override
+                                public void onAnimationEnd(Animator animation) {
+                                    isFront = true;
+                                    super.onAnimationEnd(animation);
+                                    fl_back.setVisibility(View.INVISIBLE);
+                                    cl_front.setVisibility(View.VISIBLE);
+                                    oa2.start();
+                                }
+                            });
+
+                            oa1.start();
+                        }
+                    } else {
+                        if (isFront) {
+                            fl_back.setVisibility(View.VISIBLE);
+                            cl_front.setVisibility(View.INVISIBLE);
+
+                        } else {
+                            cl_front.setVisibility(View.VISIBLE);
+                            fl_back.setVisibility(View.INVISIBLE);
+                        }
+                    }
+
                 }
-                dialog.dismiss();
-            }
-        });
-        builder.setCancelable(false);
-        builder.create().show();
+        );
 
         findViewById(R.id.iv_capture).setOnClickListener(view ->
                 DefaultFunctionKt.getBitmapFromView(mSampleView, PenActivity.this, bitmap -> {
                             Log.d("", bitmap.toString());
+                            saveGallery(this, bitmap);
                             return Unit.INSTANCE;
                         }
                 )
@@ -176,12 +262,7 @@ public class PenActivity extends AppCompatActivity
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setTitle("Permission Check");
                 builder.setMessage("PERMISSION_DENIED");
-                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        finish();
-                    }
-                });
+                builder.setPositiveButton("OK", (dialog, which) -> finish());
                 builder.setCancelable(false);
                 builder.create().show();
             }
@@ -207,8 +288,6 @@ public class PenActivity extends AppCompatActivity
         filter.addAction("firmware_update");
 
         registerReceiver(mBroadcastReceiver, filter);
-
-
     }
 
     @Override
@@ -225,6 +304,7 @@ public class PenActivity extends AppCompatActivity
 
                         if (connectionMode == 0) {
                             boolean leResult = penClientCtrl.setLeMode(isLe);
+                            NLog.d("onActivityResult ", "sppAddress : " + sppAddress + " leAddress : " + leAddress);
 
                             if (leResult) {
                                 penClientCtrl.connect(sppAddress, leAddress);
@@ -306,7 +386,11 @@ public class PenActivity extends AppCompatActivity
 
             case R.id.action_connect:
                 if (connectionMode == 1 || (connectionMode == 0 && !penClientCtrl.isConnected())) {
-                    startActivityForResult(new Intent(PenActivity.this, DeviceListActivity.class), 4);
+                    // startActivityForResult(new Intent(PenActivity.this, DeviceListActivity.class), 4);
+                    // 광우펜
+                    // penClientCtrl.connect("9C:7B:D2:05:6E:3F", "E9:11:21:67:89:23");
+                    // 내펜
+                    // penClientCtrl.connect("9C:7B:D2:05:6E:3C", "DE:D5:F1:43:71:17");
                 }
                 return true;
 
@@ -532,7 +616,12 @@ public class PenActivity extends AppCompatActivity
 
     private void handleDot(String penAddress, Dot dot) {
         NLog.d("penAddress=" + penAddress + ",handleDot type =" + dot.dotType);
+        NLog.d("penAddress=" + penAddress + ",handleDot x =" + dot.x + ",handleDot y =" + dot.y);
         mSampleView.addDot(penAddress, dot);
+        // mail (x : 87 ~ 91 | y : 9 ~ 12)
+        if (dot.x > 87 && dot.x < 91 && dot.y > 9 && dot.y < 12) {
+            Toast.makeText(this, "메일 보내라 당장", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void handleMsg(String penAddress, int penMsgType, String content) {
