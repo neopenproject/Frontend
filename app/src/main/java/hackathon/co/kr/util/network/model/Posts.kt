@@ -1,5 +1,7 @@
 package hackathon.co.kr.util.network.model
 
+import hackathon.co.kr.ui.model.Problem
+
 data class Posts(
         var id: Int,                // "" : 1,
         var max_time: Int,          // "": 2400,
@@ -13,5 +15,14 @@ data class Posts(
         var affiliation: Int,       // "": 1,
         var created_at: Long,       // "": 15666664689518080,
         var updated_at: Long        // "": 15666664689518080
-
 )
+
+fun Posts.refineToProblem(): Problem {
+    return Problem(
+            id = this.id,
+            title = this.title,
+            description = this.sub_title,
+            number = this.affiliation,
+            tags = arrayListOf(this.subject, this.category)
+    )
+}

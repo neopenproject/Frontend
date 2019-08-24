@@ -11,6 +11,15 @@
             android:layout_height="match_parent">
 
         <ImageView
+                android:id="@+id/cl_splash"
+                android:visibility="@{loginVM.isSplashing}"
+                android:src="@drawable/img_splash"
+                android:scaleType="fitXY"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+        </ImageView>
+
+        <ImageView
                 android:src="@drawable/img_login_logo"
                 android:layout_marginTop="80dp"
                 android:layout_gravity="center"

@@ -48,5 +48,6 @@
     <string name="button_le_scan">Scan LE for devices</string>
 
     <string name="default_number">%d</string>
+    <string name="challange_number">%d명이 도전함</string>
     <string name="default_float">%.1f</string>
 </resources>

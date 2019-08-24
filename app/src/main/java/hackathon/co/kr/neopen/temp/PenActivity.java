@@ -90,6 +90,7 @@ public class PenActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pen);
 
+        getWindow().setStatusBarColor(getResources().getColor(R.color.color_3440ff));
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle("");
         setSupportActionBar(toolbar);

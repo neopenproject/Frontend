@@ -63,6 +63,7 @@ public class SettingActivity extends PreferenceActivity implements OnSharedPrefe
 
 		EditText myEditText = (EditText) mPasswordPref.getEditText();
 		myEditText.setKeyListener( DigitsKeyListener.getInstance( false, true ) );
+		getWindow().setStatusBarColor(getResources().getColor(R.color.color_3440ff));
 	}
 
 	public void onSharedPreferenceChanged( SharedPreferences sharedPreferences, String key )

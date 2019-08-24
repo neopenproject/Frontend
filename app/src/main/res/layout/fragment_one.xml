@@ -235,6 +235,67 @@
                         android:layout_height="9dp"
                         android:background="#f1f0f0"/>
 
+                <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/ll_problem"
+                        android:layout_width="match_parent"
+                        app:layout_constraintTop_toBottomOf="@+id/second_line"
+                        android:padding="16dp"
+                        android:layout_height="wrap_content">
+
+                    <LinearLayout
+                            android:orientation="vertical"
+                            android:layout_width="wrap_content"
+                            app:layout_constraintLeft_toLeftOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            android:layout_height="wrap_content">
+
+                        <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textSize="18sp"
+                                android:textColor="#000000"
+                                android:lineSpacingExtra="8sp"
+                                android:text="꼭 풀어보세요!"/>
+                        <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textSize="14sp"
+                                android:textColor="#777777"
+                                android:letterSpacing="-0.02"
+                                android:lineSpacingExtra="4sp"
+                                android:text="나와 비슷한 사람들이 어려워한 문제"/>
+
+                    </LinearLayout>
+
+                    <TextView
+                            android:layout_width="wrap_content"
+                            app:layout_constraintRight_toRightOf="parent"
+                            android:text=">"
+                            app:layout_constraintTop_toTopOf="parent"
+                            android:textColor="#000000"
+                            android:textSize="20sp"
+                            android:layout_height="wrap_content"/>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rv_problems"
+                        app:layout_constraintTop_toBottomOf="@+id/ll_problem"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintRight_toRightOf="parent"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+
+                <View
+                        android:id="@+id/third_line"
+                        app:layout_constraintTop_toBottomOf="@id/rv_problems"
+                        android:layout_width="0dp"
+                        android:layout_marginTop="8dp"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintRight_toRightOf="parent"
+                        android:layout_height="9dp"
+                        android:background="#f1f0f0"/>
+
                 <TextView
                         android:id="@+id/tv_report"
                         app:layout_constraintLeft_toLeftOf="parent"
@@ -242,7 +303,7 @@
                         android:layout_height="wrap_content"
                         android:textSize="18sp"
                         android:textColor="#000000"
-                        app:layout_constraintTop_toBottomOf="@+id/second_line"
+                        app:layout_constraintTop_toBottomOf="@+id/third_line"
                         android:padding="16dp"
                         android:lineSpacingExtra="8sp"
                         android:text="학습 리포트"/>

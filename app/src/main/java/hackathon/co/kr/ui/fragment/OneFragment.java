@@ -16,16 +16,20 @@ import hackathon.co.kr.base.BaseRecyclerView;
 import hackathon.co.kr.neopen.R;
 import hackathon.co.kr.neopen.databinding.FragmentOneBinding;
 import hackathon.co.kr.neopen.databinding.ItemCorrectionBinding;
+import hackathon.co.kr.neopen.databinding.ItemProblemBinding;
 import hackathon.co.kr.ui.model.Correction;
+import hackathon.co.kr.ui.model.Problem;
 import hackathon.co.kr.ui.viewModel.OneViewModel;
 import org.jetbrains.annotations.NotNull;
 
 import static hackathon.co.kr.ui.model.CorrectionKt.getDefaultCorrections;
+import static hackathon.co.kr.ui.model.ProblemKt.getDefaultProblems;
 
 public class OneFragment extends Fragment {
 
     FragmentOneBinding binding;
     BaseRecyclerView.Adapter<Correction, ItemCorrectionBinding> correctionAdapter;
+    BaseRecyclerView.Adapter<Problem, ItemProblemBinding> problemAdapter;
 
     public static OneFragment newInstance() {
         return new OneFragment();
@@ -69,6 +73,33 @@ public class OneFragment extends Fragment {
 
         binding.rvCorrections.setAdapter(correctionAdapter);
         correctionAdapter.replaceAll(getDefaultCorrections());
+
+
+        binding.rvProblems.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.HORIZONTAL, false));
+
+        problemAdapter = new BaseRecyclerView.Adapter<Problem, ItemProblemBinding>(
+                R.layout.item_problem,
+                BR.icProblem) {
+            @NotNull
+            @Override
+            public ViewHolder<ItemProblemBinding> onCreateViewHolder(@NotNull ViewGroup parent, int viewType) {
+                ViewHolder<ItemProblemBinding> holder = super.onCreateViewHolder(parent, viewType);
+
+                holder.itemView.setOnClickListener(view -> {
+
+                });
+
+                return holder;
+            }
+
+            @Override
+            public void onBindViewHolder(@NotNull ViewHolder<ItemProblemBinding> holder, int position) {
+                super.onBindViewHolder(holder, position);
+            }
+        };
+
+        binding.rvProblems.setAdapter(problemAdapter);
+        problemAdapter.replaceAll(getDefaultProblems());
     }
 
 //    public void onButtonClick(View view) {

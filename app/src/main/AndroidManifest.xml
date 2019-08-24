@@ -24,14 +24,15 @@
                   android:theme="@style/Theme.AppCompat.Light.NoActionBar"
                   android:label="@string/app_name" android:launchMode="singleTask"/>
         <activity android:name="hackathon.co.kr.ui.login.view.AssignActivity"/>
-        <activity android:name="hackathon.co.kr.ui.login.view.LoginActivity"/>
-        <activity android:name="hackathon.co.kr.ui.activity.MainActivity">
+        <activity android:name="hackathon.co.kr.ui.login.view.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <action android:name="android.intent.action.VIEW"/>
 
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
+        </activity>
+        <activity android:name="hackathon.co.kr.ui.activity.MainActivity">
         </activity>
         <activity android:name=".temp.DeviceListActivity"/>
         <activity android:name=".temp.SettingActivity"/>

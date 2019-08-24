@@ -103,6 +103,7 @@ public class ProfileTestActivity extends Activity
         IntentFilter filter = new IntentFilter( Const.Broadcast.ACTION_PEN_MESSAGE );
         registerReceiver( mBroadcastReceiver, filter );
 
+        getWindow().setStatusBarColor(getResources().getColor(R.color.color_3440ff));
     }
 
     private void selectType(int i )
