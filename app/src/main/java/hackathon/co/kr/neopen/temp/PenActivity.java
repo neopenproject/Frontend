@@ -22,7 +22,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
-import com.pacific.timer.Rx2Timer;
 import hackathon.co.kr.neopen.DefaultFunctionKt;
 import hackathon.co.kr.neopen.R;
 import hackathon.co.kr.neopen.sdk.ink.structure.Dot;
