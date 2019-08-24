@@ -83,7 +83,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                     return;
                 }
                 else if (!(fragment instanceof OneFragment)) {
-                    binding.navBottomnavigation.setSelectedItemId(R.id.home);
+                    binding.navBottomnavigation.setSelectedItemId(R.id.one);
                     return;
                 }
             }

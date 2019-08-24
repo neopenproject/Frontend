@@ -13,20 +13,14 @@ import android.util.Log;
 import android.view.*;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
-import android.view.animation.LinearInterpolator;
-import android.widget.FrameLayout;
-import android.widget.ProgressBar;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
-import hackathon.co.kr.neopen.DefaultFunctionKt;
 import hackathon.co.kr.neopen.R;
 import hackathon.co.kr.neopen.sdk.ink.structure.Dot;
 import hackathon.co.kr.neopen.sdk.ink.structure.Stroke;
-import hackathon.co.kr.neopen.sdk.pen.bluetooth.BLENotSupportedException;
 import hackathon.co.kr.neopen.sdk.pen.bluetooth.lib.ProtocolNotSupportedException;
 import hackathon.co.kr.neopen.sdk.pen.offline.OfflineFileParser;
 import hackathon.co.kr.neopen.sdk.pen.penmsg.JsonTag;
@@ -34,23 +28,12 @@ import hackathon.co.kr.neopen.sdk.pen.penmsg.PenMsgType;
 import hackathon.co.kr.neopen.sdk.util.NLog;
 import hackathon.co.kr.util.network.NetworkUtil;
 import hackathon.co.kr.util.DateUtils;
-import io.reactivex.Observable;
-import io.reactivex.Scheduler;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.functions.Function;
-import io.reactivex.observers.DefaultObserver;
-import io.reactivex.schedulers.Schedulers;
-import kotlin.Unit;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Locale;
-import java.util.concurrent.TimeUnit;
-
-import static hackathon.co.kr.util.PhotoUtilKt.saveGallery;
 
 public class PenActivity extends AppCompatActivity
 //		implements DrawablePage.DrawablePageListener, DrawableView.DrawableViewGestureListener
@@ -58,6 +41,9 @@ public class PenActivity extends AppCompatActivity
     public static final String TAG = "pensdk.sample";
     public static boolean isInit = true;
     public static boolean isFront = true;
+
+    public boolean mTimerRunning;
+    private CountDownTimer mCountDownTimer;
 
     public static final int REQ_GPS_EXTERNAL_PERMISSION = 0x1002;
 
@@ -88,9 +74,13 @@ public class PenActivity extends AppCompatActivity
     ConstraintLayout cl_front;
     FrameLayout fl_back;
 
+    private TextView tvOriginTimerValue;
+    private ImageView changeView;
+    private ImageView ivTimerStart;
+
     private ProgressBar progressBar;
 
-    private TextView testTextView;
+    private TextView tvCountDown;
 
     private long mStartTime = 0;
     private long mTimeLeftInMillis;
@@ -99,6 +89,17 @@ public class PenActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pen);
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setTitle("");
+        setSupportActionBar(toolbar);
+
+        // add back arrow to toolbar
+        if (getSupportActionBar() != null){
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_back_white);
+            toolbar.setNavigationOnClickListener(v -> onBackPressed());
+        }
 
         try {
             ViewConfiguration config = ViewConfiguration.get(this);
@@ -147,15 +148,17 @@ public class PenActivity extends AppCompatActivity
 
         NetworkUtil.getInstance();
 
-        findViewById(R.id.iv_swap).setOnClickListener(view -> {
+        changeView = findViewById(R.id.iv_change_screen);
+
+        changeView.setOnClickListener(view -> {
 
                     // 이 화면이 current가 된지 처음일 경우
                     if (isInit) {
                         // 앞면이라면 (앞 -> 뒤)
                         if (isFront) {
+                            changeView.setImageResource(R.drawable.ic_quiz);
                             final ObjectAnimator oa1 = ObjectAnimator.ofFloat(cl_front, "scaleX", 1f, 0f);
                             final ObjectAnimator oa2 = ObjectAnimator.ofFloat(fl_back, "scaleX", 0f, 1f);
-
                             oa1.setDuration(300);
                             oa2.setDuration(300);
 
@@ -179,6 +182,7 @@ public class PenActivity extends AppCompatActivity
                         }
                         // 뒤 -> 앞
                         else {
+                            changeView.setImageResource(R.drawable.ic_write);
                             final ObjectAnimator oa1 = ObjectAnimator.ofFloat(fl_back, "scaleX", 1f, 0f);
                             final ObjectAnimator oa2 = ObjectAnimator.ofFloat(cl_front, "scaleX", 0f, 1f);
 
@@ -217,45 +221,66 @@ public class PenActivity extends AppCompatActivity
                 }
         );
 
-        findViewById(R.id.iv_capture).setOnClickListener(view ->
-                DefaultFunctionKt.getBitmapFromView(mSampleView, PenActivity.this, bitmap -> {
-                            Log.d("", bitmap.toString());
-                            saveGallery(this, bitmap);
-                            return Unit.INSTANCE;
-                        }
-                )
-        );
+//        findViewById(R.id.iv_capture).setOnClickListener(view ->
+//                DefaultFunctionKt.getBitmapFromView(mSampleView, PenActivity.this, bitmap -> {
+//                            Log.d("", bitmap.toString());
+//                            saveGallery(this, bitmap);
+//                            return Unit.INSTANCE;
+//                        }
+//                )
+//        );
 
         progressBar = findViewById(R.id.progress_timer);
-        mStartTime = 600000;
-        progressBar.setProgress(100);
+        mStartTime = 6000;
+        progressBar.setMax((int) mStartTime / 1000);
         mTimeLeftInMillis = mStartTime;
-        testTextView = findViewById(R.id.test_text);
 
-        CountDownTimer countDownTimer = new CountDownTimer(mStartTime, 1000) {
+        tvOriginTimerValue = findViewById(R.id.tv_origin_timer_value);
+        DateUtils.updateCountDownText(tvOriginTimerValue, mStartTime);
+
+        tvCountDown = findViewById(R.id.tv_countdown);
+        ivTimerStart = findViewById(R.id.iv_timer_play);
+
+        ivTimerStart.setOnClickListener(v -> {
+            if (mTimerRunning) { // pause
+                pauseTimer();
+            }
+            else { // play
+                startTimer();
+            }
+
+        });
+    }
+
+    private void startTimer() {
+
+        mCountDownTimer = new CountDownTimer(mTimeLeftInMillis, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
                 mTimeLeftInMillis = millisUntilFinished;
-                DateUtils.updateCountDownText(testTextView, mTimeLeftInMillis);
+                DateUtils.updateCountDownText(tvCountDown, mTimeLeftInMillis);
+                progressBar.setProgress((int) (mTimeLeftInMillis / 1000));
             }
 
             @Override
             public void onFinish() {
-                Toast.makeText(getBaseContext(), "시간이 초과되었습니다.", Toast.LENGTH_LONG).show();
+                tvCountDown.setText("시간이 초과되었습니다.");
+                tvCountDown.setTextColor(Color.parseColor("#FE3D04"));
+                ivTimerStart.setVisibility(View.GONE);
+                mTimerRunning = false;
             }
-        };
+        }.start();
 
-        ObjectAnimator animation = ObjectAnimator.ofInt(progressBar, "progress", 100, 0);
-        animation.setDuration(mStartTime);
-        animation.setInterpolator(new DecelerateInterpolator());
+        mTimerRunning = true;
+        ivTimerStart.setImageResource(R.drawable.ic_pause);
+    }
 
-        findViewById(R.id.btn_start).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                countDownTimer.start();
-                animation.start();
-            }
-        });
+    private void pauseTimer() {
+
+        mCountDownTimer.cancel();
+        mTimerRunning = false;
+        ivTimerStart.setImageResource(R.drawable.ic_play);
+
     }
 
     private void penClientSetting() {
