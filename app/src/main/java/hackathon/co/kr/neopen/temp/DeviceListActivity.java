@@ -222,6 +222,7 @@ public class DeviceListActivity extends AppCompatActivity {
             String noDevices = getResources().getText(R.string.none_paired).toString();
             mPairedDevicesArrayAdapter.add(noDevices);
         }
+        getWindow().setStatusBarColor(getResources().getColor(R.color.color_3440ff));
     }
 
     @Override

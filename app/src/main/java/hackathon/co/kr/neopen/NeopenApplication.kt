@@ -2,6 +2,7 @@ package hackathon.co.kr.neopen
 
 import android.app.Application
 import hackathon.co.kr.neopen.sdk.pen.PenCtrl
+import hackathon.co.kr.util.sharedPreferenceInit
 
 class NeopenApplication : Application() {
     var iPenCtrl: PenCtrl? = null
@@ -13,6 +14,8 @@ class NeopenApplication : Application() {
             setContext(applicationContext)
             registerBroadcastBTDuplicate()
         }
+
+        sharedPreferenceInit(this)
     }
 
     override fun onTerminate() {

@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
         fragmentManager.beginTransaction().add(R.id.container, oneFragment).commit();
 
-
+        getWindow().setStatusBarColor(getResources().getColor(R.color.color_3440ff));
     }
 
     @Override

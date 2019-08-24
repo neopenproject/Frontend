@@ -40,7 +40,7 @@ interface NetworkInterface {
 //            @Query("is_grade_view") is_grade_view: Boolean?
 //    ): Call<>
 //
-//    @Multipart
+//    @FormUrlEncoded
 //    @POST("/api/v1/answer/post")
 //    fun postAnswerPost(
 //            @Part image: MultipartBody.Part,
