@@ -8,20 +8,21 @@ import android.app.*;
 import android.content.*;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.os.Build;
-import android.os.Bundle;
-import android.os.Environment;
-import android.os.Parcelable;
+import android.os.*;
 import android.util.Log;
 import android.view.*;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
+import android.view.animation.LinearInterpolator;
 import android.widget.FrameLayout;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
+import com.pacific.timer.Rx2Timer;
 import hackathon.co.kr.neopen.DefaultFunctionKt;
 import hackathon.co.kr.neopen.R;
 import hackathon.co.kr.neopen.sdk.ink.structure.Dot;
@@ -32,6 +33,13 @@ import hackathon.co.kr.neopen.sdk.pen.offline.OfflineFileParser;
 import hackathon.co.kr.neopen.sdk.pen.penmsg.JsonTag;
 import hackathon.co.kr.neopen.sdk.pen.penmsg.PenMsgType;
 import hackathon.co.kr.neopen.sdk.util.NLog;
+import hackathon.co.kr.util.DateUtils;
+import io.reactivex.Observable;
+import io.reactivex.Scheduler;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Function;
+import io.reactivex.observers.DefaultObserver;
+import io.reactivex.schedulers.Schedulers;
 import kotlin.Unit;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -39,6 +47,8 @@ import org.json.JSONObject;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 import static hackathon.co.kr.util.PhotoUtilKt.saveGallery;
 
@@ -77,6 +87,13 @@ public class PenActivity extends AppCompatActivity
 
     ConstraintLayout cl_front;
     FrameLayout fl_back;
+
+    private ProgressBar progressBar;
+
+    private TextView testTextView;
+
+    private long mStartTime = 0;
+    private long mTimeLeftInMillis;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -206,6 +223,37 @@ public class PenActivity extends AppCompatActivity
                         }
                 )
         );
+
+        progressBar = findViewById(R.id.progress_timer);
+        mStartTime = 600000;
+        progressBar.setProgress(100);
+        mTimeLeftInMillis = mStartTime;
+        testTextView = findViewById(R.id.test_text);
+
+        CountDownTimer countDownTimer = new CountDownTimer(mStartTime, 1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                mTimeLeftInMillis = millisUntilFinished;
+                DateUtils.updateCountDownText(testTextView, mTimeLeftInMillis);
+            }
+
+            @Override
+            public void onFinish() {
+                Toast.makeText(getBaseContext(), "시간이 초과되었습니다.", Toast.LENGTH_LONG).show();
+            }
+        };
+
+        ObjectAnimator animation = ObjectAnimator.ofInt(progressBar, "progress", 100, 0);
+        animation.setDuration(mStartTime);
+        animation.setInterpolator(new DecelerateInterpolator());
+
+        findViewById(R.id.btn_start).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                countDownTimer.start();
+                animation.start();
+            }
+        });
     }
 
     private void penClientSetting() {
