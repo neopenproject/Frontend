@@ -32,7 +32,7 @@ import hackathon.co.kr.neopen.sdk.pen.offline.OfflineFileParser;
 import hackathon.co.kr.neopen.sdk.pen.penmsg.JsonTag;
 import hackathon.co.kr.neopen.sdk.pen.penmsg.PenMsgType;
 import hackathon.co.kr.neopen.sdk.util.NLog;
-import hackathon.co.kr.util.NetworkUtil;
+import hackathon.co.kr.util.network.NetworkUtil;
 import kotlin.Unit;
 import org.json.JSONArray;
 import org.json.JSONException;

@@ -1,4 +1,4 @@
-package hackathon.co.kr.util
+package hackathon.co.kr.util.network
 
 import retrofit2.Call
 import retrofit2.http.GET

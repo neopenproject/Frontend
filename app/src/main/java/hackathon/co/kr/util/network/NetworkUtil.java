@@ -1,4 +1,4 @@
-package hackathon.co.kr.util;
+package hackathon.co.kr.util.network;
 
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
