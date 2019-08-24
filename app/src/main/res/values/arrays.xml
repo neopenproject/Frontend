@@ -34,7 +34,7 @@
         <item>-16777216</item>
     </string-array>
 
-    <string-array name="login_titles">
+    <string-array name="assign_titles">
         <item>아이디</item>
         <item>비밀번호</item>
         <item>비밀번호 확인</item>

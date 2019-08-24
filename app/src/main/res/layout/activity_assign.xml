@@ -2,8 +2,8 @@
 
 <layout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools">
     <data>
-        <variable name="activity" type="hackathon.co.kr.ui.login.view.LoginActivity"/>
-        <variable name="loginVM" type="hackathon.co.kr.ui.login.viewModel.LoginViewModel"/>
+        <variable name="activity" type="hackathon.co.kr.ui.login.view.AssignActivity"/>
+        <variable name="assignVM" type="hackathon.co.kr.ui.login.viewModel.LoginViewModel"/>
     </data>
     <LinearLayout
             android:orientation="vertical"
@@ -18,29 +18,28 @@
                 android:layout_height="wrap_content"/>
 
         <include
-                tools:loginVM="@{loginVM}"
+                tools:loginVM="@{assignVM}"
                 tools:type="@{0}"
                 layout="@layout/layout_login"/>
 
         <include
-                tools:loginVM="@{loginVM}"
+                tools:loginVM="@{assignVM}"
                 tools:type="@{1}"
                 layout="@layout/layout_login"/>
 
         <include
-                tools:loginVM="@{loginVM}"
+                tools:loginVM="@{assignVM}"
                 tools:type="@{2}"
-                android:visibility="invisible"
                 layout="@layout/layout_login"/>
 
         <include
                 android:visibility="invisible"
-                tools:loginVM="@{loginVM}"
+                tools:loginVM="@{assignVM}"
                 tools:type="@{3}"
                 layout="@layout/layout_login"/>
 
         <LinearLayout
-                android:visibility="gone"
+                android:visibility="invisible"
                 android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_margin="16dp"
@@ -50,7 +49,7 @@
                     android:id="@+id/tv_title"
                     tools:text="이름"
                     android:textSize="13sp"
-                    android:text="@{loginVM.titles[4]}"
+                    android:text="@{assignVM.titles[4]}"
                     android:layout_width="wrap_content"
                     android:textStyle="bold"
                     android:layout_height="wrap_content"/>
@@ -65,7 +64,7 @@
                         android:textSize="18sp"
                         android:padding="4dp"
                         tools:text="abcd"
-                        android:text="@={loginVM.inputs[4]}"
+                        android:text="@={assignVM.inputs[4]}"
                         android:layout_marginTop="8dp"
                         android:background="@drawable/item_border_black"
                         android:layout_weight="1"
@@ -78,7 +77,7 @@
                         android:padding="4dp"
                         android:layout_marginHorizontal="8dp"
                         tools:text="abcd"
-                        android:text="@={loginVM.inputs[5]}"
+                        android:text="@={assignVM.inputs[5]}"
                         android:layout_marginTop="8dp"
                         android:background="@drawable/item_border_black"
                         android:layout_weight="1"
@@ -90,7 +89,7 @@
                         android:textSize="18sp"
                         android:padding="4dp"
                         tools:text="abcd"
-                        android:text="@={loginVM.inputs[6]}"
+                        android:text="@={assignVM.inputs[6]}"
                         android:layout_marginTop="8dp"
                         android:background="@drawable/item_border_black"
                         android:layout_weight="1"
@@ -101,30 +100,18 @@
 
         <include
                 android:visibility="gone"
-                tools:loginVM="@{loginVM}"
+                tools:loginVM="@{assignVM}"
                 tools:type="@{7}"
                 layout="@layout/layout_login"/>
 
         <TextView
-                android:id="@+id/btn_login"
+                android:id="@+id/btn_assign"
                 android:layout_margin="16dp"
-                android:text="로그인"
+                android:text="가입하기"
                 android:gravity="center"
                 android:background="#0000FF"
                 android:textColor="#FFFFFF"
-                android:onClick="@{() -> loginVM.loginBtnClick()}"
-                android:padding="16dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
-
-        <TextView
-                android:id="@+id/btn_assign"
-                android:layout_margin="16dp"
-                android:text="회원가입"
-                android:gravity="center"
-                android:background="#FFFFFF"
-                android:textColor="#0000FF"
-                android:onClick="@{() -> loginVM.assignBtnClick(false)}"
+                android:onClick="@{() -> assignVM.assignBtnClick(true)}"
                 android:padding="16dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
