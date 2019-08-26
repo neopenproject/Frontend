@@ -8,7 +8,6 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import hackathon.co.kr.neopen.R
 import hackathon.co.kr.util.network.NetworkUtil
-import hackathon.co.kr.util.network.model.ResponseVO
 import hackathon.co.kr.util.network.model.StringResponse
 import hackathon.co.kr.util.setSpData
 import hackathon.co.kr.util.token
@@ -43,7 +42,7 @@ class LoginViewModel(app: Application) : AndroidViewModel(app) {
 
             // 회원가입 로직 넣으면 됩니다.
             postSignup(id!!, pw!!, { response ->
-                setSpData(token, response.result)
+                setSpData(token, response.result?.token ?: "")
                 toastMessage.value = "회원가입 성공"
             }, { t -> Log.d("assignBtnClick ", t.toString()) })
         } else {
@@ -59,15 +58,19 @@ class LoginViewModel(app: Application) : AndroidViewModel(app) {
         Log.d("loginBtnClick : ", "$id, $pw")
         // 로그인 화면에서 로그인 로직 넣으면 됩니다.
         postLogin(id!!, pw!!, { response ->
-            setSpData(token, response.result)
-            toastMessage.value = "로그인 성공"
+            if (response.result?.token != null) {
+                setSpData(token, response.result?.token ?: "")
+                toastMessage.value = "로그인 성공"
+            }
+
         }, { t -> Log.d("loginBtnClick ", t.toString()) })
     }
 
 
     fun postSignup(email: String, pwd: String, onSuccess: (responseVo: StringResponse) -> Unit, onFailure: (t: Throwable) -> Unit) {
         var returnValue: StringResponse? = null
-        val getT = NetworkUtil.getInstance().postAccountCus(email, pwd)
+        val signmap = mapOf("email" to email, "pwd" to pwd)
+        val getT = NetworkUtil.getInstance().postAccountCus(signmap)
         getT.enqueue(object : Callback<StringResponse> {
             override fun onFailure(call: Call<StringResponse>, t: Throwable) {
                 onFailure(t)
@@ -82,7 +85,9 @@ class LoginViewModel(app: Application) : AndroidViewModel(app) {
 
     fun postLogin(email: String, pwd: String, onSuccess: (responseVo: StringResponse) -> Unit, onFailure: (t: Throwable) -> Unit) {
         var returnValue: StringResponse? = null
-        val getT = NetworkUtil.getInstance().postAccountCusLogin(email, pwd)
+
+        val loginmap = mapOf("email" to email, "pwd" to pwd)
+        val getT = NetworkUtil.getInstance().postAccountCusLogin(loginmap)
         getT.enqueue(object : Callback<StringResponse> {
             override fun onFailure(call: Call<StringResponse>, t: Throwable) {
                 onFailure(t)

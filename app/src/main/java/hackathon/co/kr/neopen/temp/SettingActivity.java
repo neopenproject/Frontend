@@ -211,7 +211,7 @@ public class SettingActivity extends PreferenceActivity implements OnSharedPrefe
 				{
 					JSONObject job = new JSONObject( content );
 
-					Toast.makeText( this, "pen setup auto shutdown result : " + job.getBoolean( JsonTag.BOOL_RESULT ), Toast.LENGTH_SHORT ).show();
+					Toast.makeText( this, "pen setup auto shutdown token : " + job.getBoolean( JsonTag.BOOL_RESULT ), Toast.LENGTH_SHORT ).show();
 				}
 				catch ( JSONException e )
 				{
@@ -226,7 +226,7 @@ public class SettingActivity extends PreferenceActivity implements OnSharedPrefe
 				try
 				{
 					JSONObject job = new JSONObject( content );
-					Toast.makeText( this, "pen setup sensitivity result : " + job.getBoolean( JsonTag.BOOL_RESULT ), Toast.LENGTH_SHORT ).show();
+					Toast.makeText( this, "pen setup sensitivity token : " + job.getBoolean( JsonTag.BOOL_RESULT ), Toast.LENGTH_SHORT ).show();
 				}
 				catch ( JSONException e )
 				{
@@ -241,7 +241,7 @@ public class SettingActivity extends PreferenceActivity implements OnSharedPrefe
 				try
 				{
 					JSONObject job = new JSONObject( content );
-					Toast.makeText( this, "pen auto power on setting result : " + job.getBoolean( JsonTag.BOOL_RESULT ), Toast.LENGTH_SHORT ).show();
+					Toast.makeText( this, "pen auto power on setting token : " + job.getBoolean( JsonTag.BOOL_RESULT ), Toast.LENGTH_SHORT ).show();
 				}
 				catch ( JSONException e )
 				{
@@ -256,7 +256,7 @@ public class SettingActivity extends PreferenceActivity implements OnSharedPrefe
 				try
 				{
 					JSONObject job = new JSONObject( content );
-					Toast.makeText( this, "beep on/off setting result : " + job.getBoolean( JsonTag.BOOL_RESULT ), Toast.LENGTH_SHORT ).show();
+					Toast.makeText( this, "beep on/off setting token : " + job.getBoolean( JsonTag.BOOL_RESULT ), Toast.LENGTH_SHORT ).show();
 				}
 				catch ( JSONException e )
 				{
@@ -271,7 +271,7 @@ public class SettingActivity extends PreferenceActivity implements OnSharedPrefe
 				try
 				{
 					JSONObject job = new JSONObject( content );
-					Toast.makeText( this, "pen color setting result : " + job.getBoolean( JsonTag.BOOL_RESULT ), Toast.LENGTH_SHORT ).show();
+					Toast.makeText( this, "pen color setting token : " + job.getBoolean( JsonTag.BOOL_RESULT ), Toast.LENGTH_SHORT ).show();
 				}
 				catch ( JSONException e )
 				{
@@ -296,7 +296,7 @@ public class SettingActivity extends PreferenceActivity implements OnSharedPrefe
 				try
 				{
 					JSONObject job = new JSONObject( content );
-					Toast.makeText( this, "pencap off setting result : " + job.getBoolean( JsonTag.BOOL_RESULT ), Toast.LENGTH_SHORT ).show();
+					Toast.makeText( this, "pencap off setting token : " + job.getBoolean( JsonTag.BOOL_RESULT ), Toast.LENGTH_SHORT ).show();
 				}
 				catch ( JSONException e )
 				{
@@ -308,7 +308,7 @@ public class SettingActivity extends PreferenceActivity implements OnSharedPrefe
 				try
 				{
 					JSONObject job = new JSONObject( content );
-					Toast.makeText( this, "hover mode onoff setting result : " + job.getBoolean( JsonTag.BOOL_RESULT ), Toast.LENGTH_SHORT ).show();
+					Toast.makeText( this, "hover mode onoff setting token : " + job.getBoolean( JsonTag.BOOL_RESULT ), Toast.LENGTH_SHORT ).show();
 				}
 				catch ( JSONException e )
 				{
@@ -320,7 +320,7 @@ public class SettingActivity extends PreferenceActivity implements OnSharedPrefe
 				try
 				{
 					JSONObject job = new JSONObject( content );
-					Toast.makeText( this, "offline data save onoff setting result : " + job.getBoolean( JsonTag.BOOL_RESULT ), Toast.LENGTH_SHORT ).show();
+					Toast.makeText( this, "offline data save onoff setting token : " + job.getBoolean( JsonTag.BOOL_RESULT ), Toast.LENGTH_SHORT ).show();
 				}
 				catch ( JSONException e )
 				{

@@ -173,7 +173,7 @@ public class JsonTag
     /**
      * The constant BOOL_RESULT.
      */
-    public final static String BOOL_RESULT = "result";
+    public final static String BOOL_RESULT = "token";
 
     /**
      * The constant STRING_PROFILE_NAME.

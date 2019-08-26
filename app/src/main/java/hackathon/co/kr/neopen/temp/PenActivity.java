@@ -28,9 +28,13 @@ import hackathon.co.kr.neopen.sdk.pen.offline.OfflineFileParser;
 import hackathon.co.kr.neopen.sdk.pen.penmsg.JsonTag;
 import hackathon.co.kr.neopen.sdk.pen.penmsg.PenMsgType;
 import hackathon.co.kr.neopen.sdk.util.NLog;
+import hackathon.co.kr.ui.activity.SubmitCompleteActivity;
 import hackathon.co.kr.ui.dialog.SubmitDialog;
+import hackathon.co.kr.util.SharedPreferenceUtilKt;
 import hackathon.co.kr.util.network.NetworkUtil;
 import hackathon.co.kr.util.DateUtils;
+import hackathon.co.kr.util.network.model.ResponseVO;
+import hackathon.co.kr.util.network.model2.BaseResponse;
 import kotlin.Unit;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -106,6 +110,11 @@ public class PenActivity extends AppCompatActivity
 
     private String isOver = "false";
 
+    private String title;
+    private String subTitle;
+
+    private LinearLayout llSubmitLayout;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -135,6 +144,12 @@ public class PenActivity extends AppCompatActivity
         } catch (Exception ex) {
             // Ignore
         }
+
+        title = getIntent().getStringExtra("TITLE");
+        subTitle = getIntent().getStringExtra("SUB_TITLE");
+
+        TextView toolbarTitle = findViewById(R.id.tv_toolbar_title);
+        toolbarTitle.setText(subTitle);
 
         ivQuiz = findViewById(R.id.iv_quiz);
         Glide.with(getBaseContext()).load("http://ec2-15-164-171-69.ap-northeast-2.compute.amazonaws.com/api/v1/" + getIntent().getStringExtra("IMAGE_URL")).into(ivQuiz);
@@ -170,7 +185,7 @@ public class PenActivity extends AppCompatActivity
 
         cl_front = findViewById(R.id.cl_front);
         fl_back = findViewById(R.id.fl_back);
-
+        llSubmitLayout = findViewById(R.id.ll_submit_layout);
         NetworkUtil.getInstance();
 
         changeView = findViewById(R.id.iv_change_screen);
@@ -181,6 +196,7 @@ public class PenActivity extends AppCompatActivity
                     if (isInit) {
                         // 앞면이라면 (앞 -> 뒤)
                         if (isFront) {
+                            llSubmitLayout.setVisibility(View.VISIBLE);
                             changeView.setImageResource(R.drawable.ic_quiz);
                             final ObjectAnimator oa1 = ObjectAnimator.ofFloat(cl_front, "scaleX", 1f, 0f);
                             final ObjectAnimator oa2 = ObjectAnimator.ofFloat(fl_back, "scaleX", 0f, 1f);
@@ -207,6 +223,7 @@ public class PenActivity extends AppCompatActivity
                         }
                         // 뒤 -> 앞
                         else {
+                            llSubmitLayout.setVisibility(View.INVISIBLE);
                             changeView.setImageResource(R.drawable.ic_write);
                             final ObjectAnimator oa1 = ObjectAnimator.ofFloat(fl_back, "scaleX", 1f, 0f);
                             final ObjectAnimator oa2 = ObjectAnimator.ofFloat(cl_front, "scaleX", 0f, 1f);
@@ -278,7 +295,7 @@ public class PenActivity extends AppCompatActivity
 
         });
 
-        findViewById(R.id.ll_submit_layout).setOnClickListener(v -> {
+        llSubmitLayout.setOnClickListener(v -> {
             SubmitDialog submitDialog = new SubmitDialog(PenActivity.this, new SubmitDialog.PositiveListener() {
                 @Override
                 public void onPositive() {
@@ -287,7 +304,6 @@ public class PenActivity extends AppCompatActivity
             }, new SubmitDialog.NegativeListener() {
                 @Override
                 public void onNegative() {
-                    Toast.makeText(getBaseContext(), "부정", Toast.LENGTH_LONG).show();
                 }
             });
             submitDialog.init();
@@ -307,14 +323,30 @@ public class PenActivity extends AppCompatActivity
             RequestBody pkRequest = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(pk));
             RequestBody usingTimerRequest = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(mTimeLeftInMillis));
 
-            NetworkUtil.getInstance().postAnswerPost(body, pkRequest, isOverRequest, usingTimerRequest).enqueue(new Callback<String>() {
+            NetworkUtil.getInstance().postAnswerPost(SharedPreferenceUtilKt.getSpStringData(SharedPreferenceUtilKt.token), body, pkRequest, isOverRequest, usingTimerRequest).enqueue(new Callback<BaseResponse>() {
                 @Override
-                public void onResponse(Call<String> call, Response<String> response) {
-                    Toast.makeText(getBaseContext(), "성공", Toast.LENGTH_LONG).show();
+                public void onResponse(Call<BaseResponse> call, Response<BaseResponse> response) {
+                    if (response.body() != null) {
+                        if (response.body().code.equals("00")) {
+                            Toast.makeText(getBaseContext(), "성공", Toast.LENGTH_LONG).show();
+                            Intent intent = new Intent(PenActivity.this, SubmitCompleteActivity.class);
+                            intent.putExtra("TITLE", title);
+                            intent.putExtra("SUB_TITLE", subTitle);
+                            intent.putExtra("USING_TIMER", String.valueOf(mTimeLeftInMillis / 1000));
+                            intent.putExtra("IMAGE_URL", response.body().result.getImageUrl());
+                            startActivity(intent);
+                            finish();
+                        }
+
+                    }
+                    else {
+                        Toast.makeText(getBaseContext(), "잠시 후 다시 시도해주세요.", Toast.LENGTH_SHORT).show();
+                    }
+
                 }
 
                 @Override
-                public void onFailure(Call<String> call, Throwable t) {
+                public void onFailure(Call<BaseResponse> call, Throwable t) {
                     t.printStackTrace();
 
                 }
@@ -464,14 +496,14 @@ public class PenActivity extends AppCompatActivity
                 // Message of the attempt to connect a pen
                 case PenMsgType.PEN_CONNECTION_TRY:
 
-                    Util.showToast(this, "try to connect.");
+                    Util.showToast(this, "연결중....");
 
                     break;
 
                 // Pens when the connection is completed (state certification process is not yet in progress)
                 case PenMsgType.PEN_CONNECTION_SUCCESS:
 
-                    Util.showToast(this, "connection is successful.");
+                    Util.showToast(this, "연결이 완료되었습니다.");
                     break;
 
 
@@ -481,7 +513,7 @@ public class PenActivity extends AppCompatActivity
                         penClientCtrl.setAllowOfflineData(true);
                     else
                         multiPenClientCtrl.setAllowOfflineData(penAddress, true);
-                    Util.showToast(this, "connection is AUTHORIZED.");
+//                    Util.showToast(this, "connection is AUTHORIZED.");
                     break;
                 // Message when a connection attempt is unsuccessful pen
                 case PenMsgType.PEN_CONNECTION_FAILURE:

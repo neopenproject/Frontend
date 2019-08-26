@@ -40,7 +40,7 @@ import java.util.Set;
  * This Activity appears as a dialog. It lists any paired devices and
  * devices detected in the area after discovery. When a device is chosen
  * by the user, the MAC address of the device is sent back to the parent
- * Activity in the result Intent.
+ * Activity in the token Intent.
  */
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
 public class DeviceListActivity extends AppCompatActivity {
@@ -140,7 +140,7 @@ public class DeviceListActivity extends AppCompatActivity {
 
         setContentView(R.layout.device_list);
 
-        // Set result CANCELED in case the user backs out
+        // Set token CANCELED in case the user backs out
         setResult(Activity.RESULT_CANCELED);
 
         mHandler = new Handler();
@@ -328,13 +328,13 @@ public class DeviceListActivity extends AppCompatActivity {
             NLog.d("[SdkSampleCode] select address : " + sppAddress);
 
 
-            // Create the result Intent and include the MAC address           
+            // Create the token Intent and include the MAC address
             Intent intent = new Intent();
             intent.putExtra(EXTRA_DEVICE_SPP_ADDRESS, sppAddress);
             intent.putExtra(EXTRA_DEVICE_LE_ADDRESS, temp.get(sppAddress));
             intent.putExtra(EXTRA_IS_BLUETOOTH_LE, is_le_scan);
 
-            // Set result and finish this Activity
+            // Set token and finish this Activity
             setResult(Activity.RESULT_OK, intent);
             finish();
         }

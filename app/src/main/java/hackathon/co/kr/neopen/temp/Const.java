@@ -59,7 +59,7 @@ public class Const
 		public final static String INT_PASSWORD_RETRY_COUNT = "retry_count";
 		public final static String INT_PASSWORD_RESET_COUNT = "reset_count";
 		
-		public final static String BOOL_RESULT = "result";
+		public final static String BOOL_RESULT = "token";
 	}
 	
 	public class Broadcast

@@ -57,6 +57,7 @@ class LoginActivity : AppCompatActivity() {
         if(resultCode == Activity.RESULT_OK){
             startActivity(Intent(this@LoginActivity, MainActivity::class.java))
             finish()
+            overridePendingTransition(0, R.anim.splash_animation)
         }
     }
 

@@ -255,7 +255,7 @@ public class BTLEAdt implements IPenAdt
      * Connects to the GATT server hosted on the Bluetooth LE device.
      *
      * @param sppAddress    The device address of the destination device.
-     * @return Return true if the connection is initiated successfully. The connection result
+     * @return Return true if the connection is initiated successfully. The connection token
      * is reported asynchronously through the
      * {@code BluetoothGattCallback#onConnectionStateChange(android.bluetooth.BluetoothGatt, int, int)}
      * callback.
@@ -1544,7 +1544,7 @@ public class BTLEAdt implements IPenAdt
 				synchronized (this) {
 
 					boolean ret = mBluetoothGatt.writeCharacteristic(mWriteGattChacteristic);
-					NLog.d("write result : " + ret + ", size check : " + size+",writeContinues="+writeContinues);
+					NLog.d("write token : " + ret + ", size check : " + size+",writeContinues="+writeContinues);
 
 					if (ret) {
 						writeIndex += size;
@@ -1711,7 +1711,7 @@ public class BTLEAdt implements IPenAdt
                     mtuIndex = 0;
                     mtu = mtuLIst[mtuIndex];
                     boolean ret = gatt.requestMtu( mtu );
-                    NLog.d( "mtu test result : " + ret );
+                    NLog.d( "mtu test token : " + ret );
                     boolean canReadRssi = mBluetoothGatt.readRemoteRssi();
                     NLog.d( "canReadRemoteRssi : " + canReadRssi );
                     break;

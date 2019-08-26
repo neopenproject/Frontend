@@ -11,13 +11,13 @@
             android:title="문제"
             android:icon="@drawable/ic_quiz_unselected"/>
 
-    <item
-            android:id="@+id/three"
-            android:title="스터디 룸"
-            android:icon="@drawable/ic_studyroom_unselected"/>
+    <!--<item-->
+            <!--android:id="@+id/three"-->
+            <!--android:title="스터디 룸"-->
+            <!--android:icon="@drawable/ic_studyroom_unselected"/>-->
 
-    <item
-            android:id="@+id/four"
-            android:title="영작 광"
-            android:icon="@drawable/ic_community_selected"/>
+    <!--<item-->
+            <!--android:id="@+id/four"-->
+            <!--android:title="영작 광"-->
+            <!--android:icon="@drawable/ic_community_selected"/>-->
 </menu>

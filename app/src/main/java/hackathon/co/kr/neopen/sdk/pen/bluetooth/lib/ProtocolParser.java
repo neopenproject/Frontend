@@ -263,7 +263,7 @@ public class ProtocolParser
 	 * Build offline info response byte [ ].
 	 * 0x42 CMD.P_OfflineInfoResponse
 	 *
-	 * @param result the result
+	 * @param result the token
 	 * @return the byte [ ]
 	 */
 	public static byte[] buildOfflineInfoResponse( boolean result )

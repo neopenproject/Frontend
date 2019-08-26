@@ -11,6 +11,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import com.google.gson.Gson;
 import hackathon.co.kr.adapter.QuizInProgressRVAdapter;
 import hackathon.co.kr.base.listener.OnRecyclerObjectClickListener;
 import hackathon.co.kr.base.listener.OnRecyclerPositionClickListener;
@@ -50,6 +51,8 @@ public class QuizInProgressFragment extends Fragment {
                 intent.putExtra("QUIZ_PK", item.getId());
                 intent.putExtra("IMAGE_URL", item.getProblem_img());
                 intent.putExtra("TIME_VALUE", item.getMax_time());
+                intent.putExtra("TITLE", item.getTitle());
+                intent.putExtra("SUB_TITLE", item.getSub_title());
                 startActivity(intent);
             }
         });

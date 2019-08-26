@@ -19,7 +19,7 @@ fun getBitmapFromView(view: View, activity: Activity, callback: (Bitmap) -> Unit
                     if (copyResult == PixelCopy.SUCCESS) {
                         callback(bitmap)
                     }
-                    // possible to handle other result codes ...
+                    // possible to handle other token codes ...
                 }, Handler())
             }
         } catch (e: IllegalArgumentException) {

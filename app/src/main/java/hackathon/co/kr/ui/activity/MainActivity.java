@@ -50,12 +50,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
             case R.id.two:
                 showFragment(twoFragment);
                 return true;
-            case R.id.three:
-                showFragment(threeFragment);
-                return true;
-            case R.id.four:
-                showFragment(fourFragment);
-                return true;
 
         }
         return false;

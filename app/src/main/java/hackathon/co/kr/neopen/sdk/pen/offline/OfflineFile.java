@@ -294,7 +294,7 @@ public class OfflineFile
 		String filename = String.format( DEFAULT_FILE_FORMAT, sectionId, ownerId, noteId, pageId, System.currentTimeMillis(), isCompressed ? "zip" : "pen" );
 		boolean result = tempFile.renameTo( new File(OFFLINE_FILE_PATH, filename) );
 		
-		NLog.d("[OfflineFile] result : " + result + ", filename : " + filename );
+		NLog.d("[OfflineFile] token : " + result + ", filename : " + filename );
 		
 		return OFFLINE_FILE_PATH + filename;
 	}

@@ -278,54 +278,54 @@ public class MetadataCtrl implements IMetadataCtrl {
     @Override
     public float getPageWidthWithMargin(int noteId, int pageId) {
         return getPaperValue(noteId, pageId, PaperValueType.WIDTH_INCLUDE_MARGIN);
-//		Page result = this.pageTable.get( this.getQueryString( noteId, pageId ) );
+//		Page token = this.pageTable.get( this.getQueryString( noteId, pageId ) );
 //
-//		if ( result == null )
+//		if ( token == null )
 //		{
 //			return 0;
 //		}
 //
-//		return result.width;
+//		return token.width;
     }
 
     @Override
     public float getPageHeightWithMargin(int noteId, int pageId) {
         return getPaperValue(noteId, pageId, PaperValueType.HEIGHT_INCLUDE_MARGIN);
-//		Page result = this.pageTable.get( this.getQueryString( noteId, pageId ) );
+//		Page token = this.pageTable.get( this.getQueryString( noteId, pageId ) );
 //
-//		if ( result == null )
+//		if ( token == null )
 //		{
 //			return 0;
 //		}
 //
-//		return result.height;
+//		return token.height;
     }
 
     @Override
     public float getPageWidth(int noteId, int pageId) {
         return getPaperValue(noteId, pageId, PaperValueType.WIDTH);
 //
-//		Page result = this.pageTable.get( this.getQueryString( noteId, pageId ) );
+//		Page token = this.pageTable.get( this.getQueryString( noteId, pageId ) );
 //
-//		if ( result == null )
+//		if ( token == null )
 //		{
 //			return 0;
 //		}
 //
-//		return result.width;
+//		return token.width;
     }
 
     @Override
     public float getPageHeight(int noteId, int pageId) {
         return getPaperValue(noteId, pageId, PaperValueType.HEIGHT);
-//		Page result = this.pageTable.get( this.getQueryString( noteId, pageId ) );
+//		Page token = this.pageTable.get( this.getQueryString( noteId, pageId ) );
 //
-//		if ( result == null )
+//		if ( token == null )
 //		{
 //			return 0;
 //		}
 //
-//		return result.height;
+//		return token.height;
     }
 
     private float getPaperValue(int noteId, int pageId, PaperValueType type) {
@@ -506,8 +506,8 @@ public class MetadataCtrl implements IMetadataCtrl {
     @Override
     public float getPageMarginLeft(int noteId, int pageId) {
         return getPaperValue(noteId, pageId, PaperValueType.MARGIN_LEFT);
-//		Book result = this.bookTable.get( noteId );
-//		if(result.nprojVersion < 2.31f)
+//		Book token = this.bookTable.get( noteId );
+//		if(token.nprojVersion < 2.31f)
 //		{
 //			Symbol symbol = cropAreaTable.get(""+noteId+"_"+pageId);
 //			if(symbol != null)
@@ -580,8 +580,8 @@ public class MetadataCtrl implements IMetadataCtrl {
     @Override
     public float getPageMarginTop(int noteId, int pageId) {
         return getPaperValue(noteId, pageId, PaperValueType.MARGIN_TOP);
-//		Book result = this.bookTable.get( noteId );
-//		if(result.nprojVersion < 2.31f)
+//		Book token = this.bookTable.get( noteId );
+//		if(token.nprojVersion < 2.31f)
 //		{
 //			Symbol symbol = cropAreaTable.get(""+noteId+"_"+pageId);
 //			if(symbol != null)
@@ -638,8 +638,8 @@ public class MetadataCtrl implements IMetadataCtrl {
     @Override
     public float getPageMarginRight(int noteId, int pageId) {
         return getPaperValue(noteId, pageId, PaperValueType.MARGIN_RIGHT);
-//		Book result = this.bookTable.get( noteId );
-//		if(result.nprojVersion < 2.31f)
+//		Book token = this.bookTable.get( noteId );
+//		if(token.nprojVersion < 2.31f)
 //		{
 //			Symbol symbol = cropAreaTable.get(""+noteId+"_"+pageId);
 //			if(symbol != null)
@@ -746,8 +746,8 @@ public class MetadataCtrl implements IMetadataCtrl {
     @Override
     public float getPageMarginBottom(int noteId, int pageId) {
         return getPaperValue(noteId, pageId, PaperValueType.MARGIN_BOTTOM);
-//		Book result = this.bookTable.get( noteId );
-//		if(result.nprojVersion < 2.31f)
+//		Book token = this.bookTable.get( noteId );
+//		if(token.nprojVersion < 2.31f)
 //		{
 //			Symbol symbol = cropAreaTable.get(""+noteId+"_"+pageId);
 //			if(symbol != null)

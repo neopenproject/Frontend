@@ -132,9 +132,9 @@ public class Packet
     }
 
     /**
-     * Gets result code.
+     * Gets token code.
      *
-     * @return the result code
+     * @return the token code
      */
     public byte getResultCode()
     {
